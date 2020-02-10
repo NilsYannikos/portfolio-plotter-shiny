@@ -1,0 +1,7 @@
+date	vol	price	stocksymbol	stockname	buyorsell	comm
+2014-05-05	0	0	BITA	BitAuto	sell	0
+2014-05-05	0	0	AMZN	Amazon	sell	0
+2014-05-05	32	312.55	AMZN	Amazon	buy	0
+2014-05-05	289	34.54	BITA	BitAuto	buy	0
+2014-08-04	159	62.77	BITA	BitAuto	buy	0
+2014-08-26	216	96.14	BITA	BitAuto	buy	0
