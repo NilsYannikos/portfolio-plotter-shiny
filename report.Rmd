@@ -1,0 +1,73 @@
+---
+title: "Stock Portfolio Report"
+output:
+  pdf_document
+geometry: "left=2cm,right=2cm,top=1cm,bottom=1cm"
+classoption: a4paper
+params:
+  data: NA
+  input_summary_graph_years_slider_1: NA
+  input_summary_graph_years_slider_2: NA
+  input_g1_select_sym: NA
+  input_g2_select_y: NA
+---
+
+```{r echo=FALSE, fig.height=3}
+cols <- brewer.pal(12, "Paired")
+data <- params$data %>% 
+            filter(Date >= (Sys.Date()+ 365 * params$input_summary_graph_years_slider_1)) %>% 
+            filter(Date <= (Sys.Date()+ 365 * params$input_summary_graph_years_slider_2)) %>% 
+            filter(if(params$input_g1_select_sym == "All"){Stock == Stock} else {Stock == params$input_g1_select_sym}) %>% 
+            mutate(`% Gain` = round(`% Gain`, digits = 2),
+                   `Absolute Gain` = round(`Absolute Gain`, digits = 2))
+
+g1 <- ggplot(data = data) +
+  geom_line(mapping = aes(x = Date, y = `Absolute Gain`, color = Stock)) +
+  scale_color_manual(values=cols) + 
+  ggtitle("Absolute Gain") +
+  theme(legend.position = "none")
+g1
+```
+
+
+```{r echo=FALSE, fig.height=5}
+piechart <- params$data %>% 
+  fill(c(close, Unrealized, `Absolute Gain`, `% Gain`)) %>% 
+  filter(Date == max(params$data$Date)) 
+
+
+g2a <- ggplot(data = piechart) +
+  geom_col(mapping = aes(y = `Absolute Gain`, x = reorder(Stock, `Absolute Gain`), fill = Stock)) +
+  scale_fill_manual(values = cols) +
+  theme(legend.position = "none",
+        axis.title.y=element_blank()) +
+  coord_flip()
+
+g2b <- ggplot(data = piechart) +
+  geom_col(mapping = aes(y = `% Gain`, x = reorder(Stock, `Absolute Gain`), fill = Stock)) +
+  scale_fill_manual(values = cols) +
+  theme(legend.position = "none",
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank()) +
+  coord_flip()
+
+g2c <- ggplot(data = piechart) +
+  geom_col(mapping = aes(y = Unrealized, x = reorder(Stock, `Absolute Gain`), fill = Stock)) +
+  scale_fill_manual(values = cols) +
+  theme(legend.position = "none",
+        axis.title.y=element_blank()) +
+  coord_flip()
+
+g2d <- ggplot(data = piechart) +
+  geom_col(mapping = aes(y = Realized, x = reorder(Stock, `Absolute Gain`), fill = Stock)) +
+  scale_fill_manual(values = cols) +
+  theme(legend.position = "none",
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank()) +
+  coord_flip()
+
+grid.arrange(g2a, g2b, g2c, g2d, ncol = 2)        
+
+```
