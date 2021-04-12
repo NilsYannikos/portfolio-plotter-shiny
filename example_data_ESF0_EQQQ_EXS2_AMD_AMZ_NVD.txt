@@ -1,0 +1,7 @@
+Stock	Date	comm	type	buy_volume	buy_price	cost	sell_volume	sell_price	sell_tax	sell_value
+EQQQ.DE	2020-10-09	10	buy	9	219	1981	0	0	0	0
+AMD.DE	2020-10-09	10	buy	28	70.61	1987.08	0	0	0	0
+AMZ.F	2020-10-09	10	buy	1	2753	2763	0	0	0	0
+ESF0.F	2020-10-09	10	buy	30	69.64	2099.2	0	0	0	0
+EXS2.DE	2020-10-09	10	buy	71	28.83	2056.93	0	0	0	0
+NVD.DE	2020-10-09	10	buy	4	463.55	1864.2	0	0	0	0
