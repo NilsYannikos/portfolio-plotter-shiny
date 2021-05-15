@@ -15,14 +15,14 @@ ui <- dashboardPage(
   ## Sidebar content
   dashboardSidebar(collapsed = FALSE,
                    sidebarMenu(
-                     menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
-                     menuItem("Widgets", tabName = "widgets", icon = icon("th"))
+                     menuItem("Dashboard", tabName = "Dashboard", icon = icon("dashboard")),
+                     menuItem("Data tables", tabName = "Data_tables", icon = icon("th"))
                    )
   ),
   dashboardBody(
     tabItems(
       # First tab content
-      tabItem(tabName = "dashboard",
+      tabItem(tabName = "Dashboard",
               fluidRow(
                 column(3, offset = 0, style='padding:40px;',
 
@@ -90,9 +90,9 @@ ui <- dashboardPage(
       ),
 
       # Second tab content
-      tabItem(tabName = "widgets",
-              column(4, offset = 0, style='padding:0px;',
-                     box(title = "Stocks and transactionsqwe", width = 12, solidHeader = TRUE, collapsible = TRUE, status = "primary",
+      tabItem(tabName = "Data_tables",
+              fluidRow(
+                     box(title = "Stocks and transactions", width = 12, solidHeader = TRUE, collapsible = TRUE, status = "primary",
 
                          fluidRow(
                            column(12,
@@ -151,7 +151,7 @@ ui <- dashboardPage(
 
               #### Second Row - Table
               fluidRow(
-                box(title = "Transaction tablewe", width = 12, solidHeader = TRUE, collapsible = TRUE, status = "primary",
+                box(title = "Transactions", width = 12, solidHeader = TRUE, collapsible = TRUE, status = "primary",
                     column(12,
                            dataTableOutput("trans_table")),
                     column(4,
@@ -162,7 +162,7 @@ ui <- dashboardPage(
               ),
               #### Third Row - Table
               fluidRow(
-                box(title = "Complete Dataweee", width = 12, solidHeader = TRUE, collapsible = TRUE, status = "primary",
+                box(title = "Individual stock performance within the portfolio", width = 12, solidHeader = TRUE, collapsible = TRUE, status = "primary",
                     column(12,
                            dataTableOutput("stock_data_table", width = "auto")),
                     column(4,
@@ -170,7 +170,7 @@ ui <- dashboardPage(
                 )
               ),
               fluidRow(
-                box(title = "Complete Data unitedwew", width = 12, solidHeader = TRUE, collapsible = TRUE, status = "primary",
+                box(title = "The whole portfolio performance data (all stocks combined)", width = 12, solidHeader = TRUE, collapsible = TRUE, status = "primary",
                     column(12,
                            dataTableOutput("stock_data_table_united", width = "auto"))
                 )
@@ -328,7 +328,8 @@ server <- function(input, output, session) {
              `Total Value` = Realized + Unrealized,
              `Absolute Gain` = `Total Value` - `Total Cost`,
              `% Gain` = `Absolute Gain` / `Total Cost` * 100) %>%
-      fill(close, Unrealized, `Total Value`, `Absolute Gain`, `% Gain`, comm)
+      fill(close, Unrealized, `Total Value`, `Absolute Gain`, `% Gain`, comm) %>% 
+      mutate(`% Gain` = replace_na(`% Gain`, 0))
 
 
     stock_data
@@ -381,9 +382,9 @@ server <- function(input, output, session) {
               legend.box.background = element_rect(fill = "transparent") # get rid of legend panel bg
         ) +
         ggtitle("% Gain (Per Position)")
-      ggplotly(g1, tooltip = c("Date", "Stock","% Gain")) %>%
-        layout(paper_bgcolor="rgba(0, 0, 0, 0)") #xaxis = list(fixedrange = TRUE), yaxis = list(fixedrange = TRUE))
-      #config(displayModeBar = FALSE) %>%
+      ggplotly(g1, tooltip = c("Date", "Stock", "% Gain")) %>%
+        layout(paper_bgcolor="rgba(0, 0, 0, 0)") %>% #xaxis = list(fixedrange = TRUE), yaxis = list(fixedrange = TRUE))
+      config(displayModeBar = FALSE) 
     }
   })
 
@@ -397,7 +398,8 @@ server <- function(input, output, session) {
                 `Total Value` = sum(`Total Value`),
                 `Absolute Gain` = sum(`Absolute Gain`),
                 `% Gain` = `Absolute Gain` / `Total Cost` * 100
-      )
+      ) %>% 
+      mutate(`% Gain` = replace_na(`% Gain`, 0))
 
   })
 
@@ -454,8 +456,8 @@ server <- function(input, output, session) {
         ) +
         ggtitle("% Gain (Portfolio)")
       ggplotly(g1, tooltip = c("Date", "% Gain")) %>%
-        layout(paper_bgcolor="rgba(0, 0, 0, 0)")
-      #config(displayModeBar = FALSE) %>%
+        layout(paper_bgcolor="rgba(0, 0, 0, 0)") %>% 
+      config(displayModeBar = FALSE) #%>%
       #layout(xaxis = list(fixedrange = TRUE), yaxis = list(fixedrange = TRUE))
     }
   })
